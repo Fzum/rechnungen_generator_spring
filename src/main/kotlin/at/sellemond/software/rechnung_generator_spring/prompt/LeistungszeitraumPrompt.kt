@@ -18,7 +18,7 @@ class LeistungszeitraumPrompt {
         val yearSelectionOptions = mapOf(0 to currentYear, 1 to currentYear - 1)
         yearSelectionOptions.forEach { printSelection(it) }
 
-        val yearSelection = readLine()?.toInt()!!
+        val yearSelection = readlnOrNull()?.toInt()!!
         if (yearSelection < 0 || yearSelection > yearSelectionOptions.size - 1) {
             throw SelectionOutOfBoundException()
         }
@@ -29,7 +29,7 @@ class LeistungszeitraumPrompt {
         val monthSelectionOptions = mapOf(0 to currentMonth, 1 to currentMonth - 1, 2 to currentMonth - 2)
         monthSelectionOptions.forEach { printSelection(it) }
 
-        val monthSelection = readLine()?.toInt()!!
+        val monthSelection = readlnOrNull()?.toInt()!!
         if (monthSelection < 0 || monthSelection > monthSelectionOptions.size - 1) {
             throw SelectionOutOfBoundException()
         }

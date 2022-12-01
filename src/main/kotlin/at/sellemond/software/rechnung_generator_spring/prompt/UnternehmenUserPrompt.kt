@@ -36,7 +36,7 @@ class UnternehmenUserPrompt {
 
         options.forEachIndexed { index, s -> println("${index}: $s") }
 
-        val selection = readLine()!!.toInt()
+        val selection = readln().toInt()
         if (selection < 0 || selection > options.size - 1) {
             throw SelectionOutOfBoundException()
         }
