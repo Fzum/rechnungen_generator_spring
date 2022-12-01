@@ -1,15 +1,16 @@
+import at.sellemond.software.rechnung_generator_spring.model.AbrechnungProperties
+import at.sellemond.software.rechnung_generator_spring.prompt.LeistungszeitraumPromptResult
+import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenPromptResult
+import at.sellemond.software.rechnung_generator_spring.util.RechnungUidGenerator
+import at.sellemond.software.rechnung_generator_spring.util.alignToBottom
+import at.sellemond.software.rechnung_generator_spring.util.calculateNettobetrag
+import at.sellemond.software.rechnung_generator_spring.util.toEuroFormat
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.TextAlignment
-import at.sellemond.software.rechnung_generator_spring.model.AbrechnungProperties
 import model.Unternehmen
-import at.sellemond.software.rechnung_generator_spring.prompt.LeistungszeitraumPromptResult
-import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenPromptResult
-import at.sellemond.software.rechnung_generator_spring.util.RechnungUidGenerator
-import at.sellemond.software.rechnung_generator_spring.util.calculateNettobetrag
-import at.sellemond.software.rechnung_generator_spring.util.toEuroFormat
 import java.time.LocalDateTime
 
 class PdfCreator {
@@ -44,7 +45,7 @@ class PdfCreator {
                 .add(getGesamtbetragWithUstParagraph(ustBetrag, nettobetrag))
                 .add(getZahlungsbedingungenParagraph(abrechnungProperties))
                 .add(getZahlungsaufforderungParagraph(abrechnungProperties))
-                .add(getImpressumParagraph(unternehmen))
+                .add(getImpressumParagraph(unternehmen).alignToBottom(pdf, document))
 
             document.close()
         }
@@ -67,13 +68,14 @@ class PdfCreator {
         private fun getAusstellungsdatumParagraph(): Paragraph =
             Paragraph("Wien, ${toEuroFormat(LocalDateTime.now())}").setTextAlignment(TextAlignment.RIGHT)
 
-        private fun getTable(stundenLeistung: Int, abrechnungProperties: AbrechnungProperties) = LeistungsaufstellungTable()
-            .addMenge(stundenLeistung)
-            .addEinheit(abrechnungProperties.einheit)
-            .addStundensatz(abrechnungProperties.stundensatz)
-            .addUst(abrechnungProperties.ust)
-            .addTaetigkeit(abrechnungProperties.taetigkeit)
-            .addBetrag(calculateNettobetrag(stundenLeistung, abrechnungProperties.stundensatz))
+        private fun getTable(stundenLeistung: Int, abrechnungProperties: AbrechnungProperties) =
+            LeistungsaufstellungTable()
+                .addMenge(stundenLeistung)
+                .addEinheit(abrechnungProperties.einheit)
+                .addStundensatz(abrechnungProperties.stundensatz)
+                .addUst(abrechnungProperties.ust)
+                .addTaetigkeit(abrechnungProperties.taetigkeit)
+                .addBetrag(calculateNettobetrag(stundenLeistung, abrechnungProperties.stundensatz))
 
         private fun getUstBetrag(
             abrechnungProperties: AbrechnungProperties,
@@ -100,8 +102,8 @@ class PdfCreator {
                     "Raiffeisen-Landesbank Tirol, IBAN: ${abrechnungProperties.iban}."
         )
 
-        private fun getImpressumParagraph(unternehmen: Unternehmen): Paragraph? =
-            Paragraph("Sitz in ${unternehmen.adresse} \n UID NR.: ${unternehmen.uid}")
+        private fun getImpressumParagraph(unternehmen: Unternehmen): Paragraph =
+            Paragraph("UID NR.: ${unternehmen.uid}\nSitz in ${unternehmen.adresse}")
                 .setUnderline()
                 .setTextAlignment(TextAlignment.CENTER)
     }
