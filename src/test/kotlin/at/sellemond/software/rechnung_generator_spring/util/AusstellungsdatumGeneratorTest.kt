@@ -12,8 +12,10 @@ internal class AusstellungsdatumGeneratorTest {
         val split = ausstellungsdatum.split(".")
         val now = LocalDateTime.now()
 
-        assertThat(split[0]).isEqualTo(now.dayOfMonth.toString())
-        assertThat(split[1]).isEqualTo(now.monthValue.toString())
+        val appendZeroIfLtTen = { x: Int -> if (x < 10) "0$x" else x.toString() }
+
+        assertThat(split[0]).isEqualTo(appendZeroIfLtTen(now.dayOfMonth))
+        assertThat(split[1]).isEqualTo(appendZeroIfLtTen(now.monthValue))
         assertThat(split[2]).isEqualTo(now.year.toString())
     }
 }
