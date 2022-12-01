@@ -42,6 +42,7 @@ class PdfCreator {
                 .add(getTable(stundenleistungPromptResult, abrechnungProperties))
                 .add(ustBetragParagraph)
                 .add(getGesamtbetragWithUstParagraph(ustBetrag, nettobetrag))
+                .add(getZahlungsbedingungenParagraph(abrechnungProperties))
                 .add(getZahlungsaufforderungParagraph(abrechnungProperties))
                 .add(getImpressumParagraph(unternehmen))
 
@@ -90,6 +91,9 @@ class PdfCreator {
             Paragraph("Gesamtbetrag inkl. Ust: ${ustBetrag + nettobetrag}")
                 .setTextAlignment(TextAlignment.RIGHT)
                 .setUnderline()
+
+        private fun getZahlungsbedingungenParagraph(abrechnungProperties: AbrechnungProperties): Paragraph =
+            Paragraph("Zahlungsbedingungen: ${abrechnungProperties.zahlungsbedingungen}")
 
         private fun getZahlungsaufforderungParagraph(abrechnungProperties: AbrechnungProperties): Paragraph = Paragraph(
             "Ich bedanke mich für Ihren Auftrag und ersuche um Überweisung des Betrags auf das Konto der " +

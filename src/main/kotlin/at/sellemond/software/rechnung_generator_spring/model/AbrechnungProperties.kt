@@ -8,6 +8,7 @@ class AbrechnungProperties {
     var taetigkeit: String
     var ust: Int
     var iban: String
+    var zahlungsbedingungen: String
 
     init {
         val prop = Properties()
@@ -18,5 +19,6 @@ class AbrechnungProperties {
         taetigkeit = prop.getProperty("taetigkeit")!!
         ust = prop.getProperty("ust")!!.toInt()
         iban = prop.getProperty("iban")
+        zahlungsbedingungen = prop.getProperty("zahlungsbedingungen")
     }
 }
