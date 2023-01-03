@@ -82,16 +82,16 @@ class PdfCreator {
             abrechnungProperties: AbrechnungProperties,
             nettobetrag: BigDecimal
         ): Pair<Paragraph, BigDecimal> {
-            val ustBetrag = nettobetrag * (BigDecimal(abrechnungProperties.ust).divide(BigDecimal(100)))
+            val ustBetrag = nettobetrag.times((BigDecimal(abrechnungProperties.ust).divide(BigDecimal(100))))
             return Pair(
-                Paragraph("${abrechnungProperties.ust}% Ust: $ustBetrag")
+                Paragraph("${abrechnungProperties.ust}% Ust: ${ustBetrag.setScale(2)}")
                     .setTextAlignment(TextAlignment.RIGHT)
                     .setUnderline(), ustBetrag
             )
         }
 
         private fun getGesamtbetragWithUstParagraph(ustBetrag: BigDecimal, nettobetrag: BigDecimal): Paragraph =
-            Paragraph("Gesamtbetrag inkl. Ust: ${ustBetrag.add(nettobetrag)}")
+            Paragraph("Gesamtbetrag inkl. Ust: ${ustBetrag.add(nettobetrag).setScale(2)}")
                 .setTextAlignment(TextAlignment.RIGHT)
                 .setUnderline()
 
