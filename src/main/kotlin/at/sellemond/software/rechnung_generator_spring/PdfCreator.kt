@@ -11,6 +11,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.TextAlignment
 import model.Unternehmen
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 class PdfCreator {
@@ -18,7 +19,7 @@ class PdfCreator {
         fun createRechnung(
             unternehmenPromptResult: UnternehmenPromptResult,
             leistungszeitraumPromptResult: LeistungszeitraumPromptResult,
-            stundenleistungPromptResult: Int
+            stundenleistungPromptResult: BigDecimal
         ) {
             val kunde = UnternehmenPropertiesParser.parse(unternehmenPromptResult.kundenProperties)
             RechnungenFolderCreator.createFolderIfNotPresent(kunde.name)
@@ -68,7 +69,7 @@ class PdfCreator {
         private fun getAusstellungsdatumParagraph(): Paragraph =
             Paragraph("Wien, ${toEuroFormat(LocalDateTime.now())}").setTextAlignment(TextAlignment.RIGHT)
 
-        private fun getTable(stundenLeistung: Int, abrechnungProperties: AbrechnungProperties) =
+        private fun getTable(stundenLeistung: BigDecimal, abrechnungProperties: AbrechnungProperties) =
             LeistungsaufstellungTable()
                 .addMenge(stundenLeistung)
                 .addEinheit(abrechnungProperties.einheit)
@@ -79,9 +80,9 @@ class PdfCreator {
 
         private fun getUstBetrag(
             abrechnungProperties: AbrechnungProperties,
-            nettobetrag: Int
-        ): Pair<Paragraph, Double> {
-            val ustBetrag = nettobetrag * (abrechnungProperties.ust.toDouble() / 100)
+            nettobetrag: BigDecimal
+        ): Pair<Paragraph, BigDecimal> {
+            val ustBetrag = nettobetrag * (BigDecimal(abrechnungProperties.ust).divide(BigDecimal(100)))
             return Pair(
                 Paragraph("${abrechnungProperties.ust}% Ust: $ustBetrag")
                     .setTextAlignment(TextAlignment.RIGHT)
@@ -89,8 +90,8 @@ class PdfCreator {
             )
         }
 
-        private fun getGesamtbetragWithUstParagraph(ustBetrag: Double, nettobetrag: Int): Paragraph =
-            Paragraph("Gesamtbetrag inkl. Ust: ${ustBetrag + nettobetrag}")
+        private fun getGesamtbetragWithUstParagraph(ustBetrag: BigDecimal, nettobetrag: BigDecimal): Paragraph =
+            Paragraph("Gesamtbetrag inkl. Ust: ${ustBetrag.add(nettobetrag)}")
                 .setTextAlignment(TextAlignment.RIGHT)
                 .setUnderline()
 

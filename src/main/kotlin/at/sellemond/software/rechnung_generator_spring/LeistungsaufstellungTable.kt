@@ -1,6 +1,7 @@
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
+import java.math.BigDecimal
 
 class LeistungsaufstellungTable : Table(6) {
     init {
@@ -14,7 +15,7 @@ class LeistungsaufstellungTable : Table(6) {
             }
     }
 
-    fun addMenge(menge: Int): LeistungsaufstellungTable {
+    fun addMenge(menge: BigDecimal): LeistungsaufstellungTable {
         addParagraphToCol(0, menge.toString())
         return this
     }
@@ -39,7 +40,7 @@ class LeistungsaufstellungTable : Table(6) {
         return this
     }
 
-    fun addBetrag(betrag: Int): LeistungsaufstellungTable {
+    fun addBetrag(betrag: BigDecimal): LeistungsaufstellungTable {
         addParagraphToCol(5, betrag.toString())
         return this
     }
