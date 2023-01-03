@@ -26,7 +26,12 @@ class LeistungszeitraumPrompt {
         println("Für welches Monat soll die Rechnung erzeugt werden?")
         val currentMonth = now.monthValue
 
-        val monthSelectionOptions = mapOf(0 to currentMonth, 1 to currentMonth - 1, 2 to currentMonth - 2)
+        val monthSelectionOptions =
+            if (currentMonth == 1)
+                mapOf(0 to 12, 1 to currentMonth)
+            else
+                mapOf(0 to currentMonth, 1 to currentMonth - 1)
+
         monthSelectionOptions.forEach { printSelection(it) }
 
         val monthSelection = readlnOrNull()?.toInt()!!
