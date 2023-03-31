@@ -13,9 +13,9 @@ class RechnungGeneratorSpringApplication
 fun main(args: Array<String>) {
     runApplication<RechnungGeneratorSpringApplication>(*args)
     PdfCreator.createRechnung(
-            UnternehmenUserPrompt().promptUser(),
-            LeistungszeitraumPrompt().promptUser(),
-            StundenleistungPrompt().prompt()
+        UnternehmenUserPrompt().promptUser(),
+        LeistungszeitraumPrompt().promptUser(),
+        StundenleistungPrompt().prompt()
     )
 
     openEmailClient()

@@ -1,4 +1,5 @@
 package at.sellemond.software.rechnung_generator_spring
+
 import at.sellemond.software.rechnung_generator_spring.util.RechnungUidGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
