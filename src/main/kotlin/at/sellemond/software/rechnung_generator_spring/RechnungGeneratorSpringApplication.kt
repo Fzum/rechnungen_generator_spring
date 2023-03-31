@@ -23,7 +23,17 @@ fun main(args: Array<String>) {
 
 private fun openEmailClient() {
     // only works on mac -> check OS
-    val command = "open mailto:test@test.com?subject=pdf&body=body"
+    val leistungszeitraum = "todo"
+    val to = "verrechnung@sw-xperts.com" // load from props
+    val body = """
+        Sg. Damen und Herren,
+
+        Anbei meine Rechnung und der Leistungsnachweis für $leistungszeitraum.
+        Mit freundlichen Grüßen,
+        Sellemond
+    """.trimIndent()
+
+    val command = "open mailto:$to?subject=pdf&body=$body"
     println(command)
     Runtime.getRuntime().exec(command)
 }
