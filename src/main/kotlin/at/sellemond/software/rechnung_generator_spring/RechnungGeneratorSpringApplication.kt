@@ -24,6 +24,7 @@ fun main(args: Array<String>) {
 private fun openEmailClient() {
     // only works on mac -> check OS
     val leistungszeitraum = "todo"
+    val subject = "Rechnung $leistungszeitraum"
     val to = "verrechnung@sw-xperts.com" // load from props
     val body = """
         Sg. Damen und Herren,
@@ -33,7 +34,7 @@ private fun openEmailClient() {
         Sellemond
     """.trimIndent()
 
-    val command = "open mailto:$to?subject=pdf&body=$body"
+    val command = "open mailto:$to?subject=$subject&body=$body"
     println(command)
     Runtime.getRuntime().exec(command)
 }
