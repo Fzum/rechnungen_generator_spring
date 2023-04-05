@@ -11,4 +11,4 @@ data class Adresse(val strasse: String, val stadt: String, val land: String) {
     }
 }
 
-data class Contact(val telNr: String, val website: String)
+data class Contact(val telNr: String, val website: String, val email: String)

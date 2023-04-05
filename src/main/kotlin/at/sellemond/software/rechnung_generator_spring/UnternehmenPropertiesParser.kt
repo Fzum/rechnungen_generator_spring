@@ -9,7 +9,7 @@ class UnternehmenPropertiesParser {
             properties.getProperty("name"),
             getAdresse(properties),
             properties.getProperty("uid"),
-            getContactIfPresent(properties)
+            getContact(properties)
         )
 
         private fun getAdresse(properties: Properties) = Adresse(
@@ -18,9 +18,10 @@ class UnternehmenPropertiesParser {
             properties.getProperty("land")
         )
 
-        private fun getContactIfPresent(properties: Properties) = Contact(
+        private fun getContact(properties: Properties) = Contact(
             properties.getProperty("telNr", ""),
             properties.getProperty("website", ""),
+            properties.getProperty("email")
         )
     }
 }

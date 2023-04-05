@@ -1,0 +1,7 @@
+email:
+  subject: Rechnung {{leistungszeitraum}}
+  body: |
+    Sehr geehrte Damen und Herren,
+    hiermit senden ich Ihnen die Rechnung für die Leistungen im Monat {{month}}.
+    Mit freundlichen Grüßen
+    Fabian Sellemond
