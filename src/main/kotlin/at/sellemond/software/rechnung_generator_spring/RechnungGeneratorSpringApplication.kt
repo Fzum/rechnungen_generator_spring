@@ -1,6 +1,5 @@
 package at.sellemond.software.rechnung_generator_spring
 
-import PdfCreator
 import UnternehmenPropertiesParser
 import at.sellemond.software.rechnung_generator_spring.email.EmailInitiator
 import at.sellemond.software.rechnung_generator_spring.prompt.LeistungszeitraumPrompt
@@ -23,22 +22,24 @@ fun main(args: Array<String>) {
 }
 
 @Component
-class MyCommandLineRunner(
+class RechnungGeneratorCommandLineRunner(
     private val emailInitiator: EmailInitiator,
+    private val pdfCreator: PdfCreator
 ) : CommandLineRunner {
 
     override fun run(vararg args: String?) {
         val unternehmenPromptResult = UnternehmenUserPrompt().promptUser()
         val leistungszeitraumPromptResult = LeistungszeitraumPrompt().promptUser()
-        val zeitraum = leistungszeitraumPromptResult.zeitraum
 
-        PdfCreator.createRechnung(
+        pdfCreator.createRechnung(
             unternehmenPromptResult,
             leistungszeitraumPromptResult,
             StundenleistungPrompt().prompt()
         )
 
+        val zeitraum = leistungszeitraumPromptResult.zeitraum
         val kunde = UnternehmenPropertiesParser.parse(unternehmenPromptResult.kundenProperties)
+
         emailInitiator.initiateEmail(kunde, zeitraum)
     }
 }
