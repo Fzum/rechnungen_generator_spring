@@ -11,6 +11,7 @@ private fun printSelection(x: Map.Entry<Int, Int>) = println("${x.key}: ${x.valu
 
 class LeistungszeitraumPrompt {
     fun promptUser(): LeistungszeitraumPromptResult {
+        println("\n")
         println("Für welches Jahr soll die Rechnung erzeugt werden?")
         val now = LocalDateTime.now()
         val currentYear = now.year
