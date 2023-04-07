@@ -17,8 +17,8 @@ internal class UnternehmenPropertiesParserTest {
         assertThat(unternehmen.uid).isEqualTo("uid")
         assertThat(unternehmen.name).isEqualTo("name")
 
-        assertThat(unternehmen.contact?.telNr).isEmpty()
-        assertThat(unternehmen.contact?.website).isEmpty()
+        assertThat(unternehmen.contact.telNr).isEmpty()
+        assertThat(unternehmen.contact.website).isEmpty()
 
         assertThat(unternehmen.adresse.land).isEqualTo("land")
         assertThat(unternehmen.adresse.stadt).isEqualTo("stadt")
@@ -36,8 +36,8 @@ internal class UnternehmenPropertiesParserTest {
         assertThat(unternehmen.uid).isEqualTo("uid")
         assertThat(unternehmen.name).isEqualTo("name")
 
-        assertThat(unternehmen.contact?.telNr).isEqualTo("telNr")
-        assertThat(unternehmen.contact?.website).isEqualTo("website")
+        assertThat(unternehmen.contact.telNr).isEqualTo("telNr")
+        assertThat(unternehmen.contact.website).isEqualTo("website")
 
         assertThat(unternehmen.adresse.land).isEqualTo("land")
         assertThat(unternehmen.adresse.stadt).isEqualTo("stadt")
