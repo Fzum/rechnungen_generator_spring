@@ -1,4 +1,4 @@
-package at.sellemond.software.rechnung_generator_spring.email
+package at.sellemond.software.rechnung_generator_spring.termination.email
 
 import at.sellemond.software.rechnung_generator_spring.util.replacePlaceholder
 import at.sellemond.software.rechnung_generator_spring.util.sanitizeUrl

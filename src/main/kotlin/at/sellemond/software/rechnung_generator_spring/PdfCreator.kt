@@ -26,11 +26,12 @@ class PdfCreator(private val abrechnungProperties: AbrechnungProperties) {
         unternehmenPromptResult: UnternehmenPromptResult,
         leistungszeitraumPromptResult: LeistungszeitraumPromptResult,
         stundenleistungPromptResult: BigDecimal
-    ) {
+    ): String {
         val kunde = UnternehmenPropertiesParser.parse(unternehmenPromptResult.kundenProperties)
         RechnungenFolderCreator.createFolderIfNotPresent(kunde.name)
 
-        val writer = PdfWriter(getPdfFileName(kunde, leistungszeitraumPromptResult))
+        val pdfFileName = getPdfFileName(kunde, leistungszeitraumPromptResult)
+        val writer = PdfWriter(pdfFileName)
         val pdf = PdfDocument(writer)
         val document = Document(pdf)
 
@@ -54,6 +55,8 @@ class PdfCreator(private val abrechnungProperties: AbrechnungProperties) {
             .add(getImpressumParagraph(unternehmen).alignToBottom(pdf, document))
 
         document.close()
+
+        return pdfFileName
     }
 
     private fun getPdfFileName(kunde: Unternehmen, leistungszeitraumPromptResult: LeistungszeitraumPromptResult) =
