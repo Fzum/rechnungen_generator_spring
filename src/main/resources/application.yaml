@@ -3,7 +3,7 @@ email:
   body: |
     Sehr geehrte Damen und Herren,
     
-    hiermit senden ich Ihnen die Rechnung fuer den Leistungszeitraum {{leistungszeitraum}}.
+    hiermit sende ich Ihnen die Rechnung fuer den Leistungszeitraum {{leistungszeitraum}}.
     
     Mit freundlichen Gruessen
     Fabian Sellemond
