@@ -13,4 +13,15 @@ fun calculateNettobetrag(stundenleistung: BigDecimal, stundensatz: Int): BigDeci
     return stundenleistung.multiply(BigDecimal(stundensatz))
 }
 
-fun sanitizeUrl(s: String) = URLEncoder.encode(s, "UTF-8").replace("+", "%20")
+fun sanitizeUrl(s: String) = URLEncoder.encode(s, "UTF-8")
+    .replace("+", "%20")
+    .replace("ue", "ü")
+    .replace("ae", "ä")
+    .replace("oe", "ö")
+    .replace("Ue", "Ü")
+    .replace("Ae", "Ä")
+    .replace("Oe", "Ö")
+    .replace("ss", "ß")
+
+fun replacePlaceholder(input: String, placeholder: String, replacement: String) =
+    input.replace("{{$placeholder}}", replacement)

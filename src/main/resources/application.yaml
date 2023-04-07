@@ -1,0 +1,9 @@
+email:
+  subject: Rechnung im Leistungszeitraum {{leistungszeitraum}}
+  body: |
+    Sehr geehrte Damen und Herren,
+    
+    hiermit senden ich Ihnen die Rechnung fuer den Leistungszeitraum {{leistungszeitraum}}.
+    
+    Mit freundlichen Gruessen
+    Fabian Sellemond
