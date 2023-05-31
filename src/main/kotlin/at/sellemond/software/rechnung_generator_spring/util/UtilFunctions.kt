@@ -27,9 +27,5 @@ fun replacePlaceholder(input: String, placeholder: String, replacement: String) 
 
 fun removeLastPathComponent(path: String): String {
     val lastSlashIndex = path.lastIndexOf("/")
-    return if (lastSlashIndex >= 0) {
-        path.substring(0, lastSlashIndex)
-    } else {
-        path
-    }
+    return if (lastSlashIndex >= 0) path.substring(0, lastSlashIndex) else path
 }
