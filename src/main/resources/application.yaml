@@ -8,9 +8,9 @@ email:
     Mit freundlichen Gruessen
     Fabian Sellemond
 abrechnung:
-  stundensatz: 90
+  stundensatz: 94
   einheit: Stunden
   taetigkeit: Software Engineering
   ust: 20
   iban: AT32 3600 0000 0062 1938
-  zahlungsbedingungen: 38 Tage ohne Abzüge
+  zahlungsbedingungen: 30 Tage ohne Abzüge

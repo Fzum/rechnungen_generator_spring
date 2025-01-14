@@ -1,6 +1,12 @@
 package model
 
-data class Unternehmen(val name: String, val adresse: Adresse, val uid: String, val contact: Contact) {
+data class Unternehmen(
+    val shortName: String,
+    val name: String,
+    val adresse: Adresse,
+    val uid: String,
+    val contact: Contact
+) {
     override fun toString(): String =
         "$name\n${adresse.strasse}\n${adresse.stadt}\n${adresse.land}\n${contact.telNr}\n${contact.website}"
 }

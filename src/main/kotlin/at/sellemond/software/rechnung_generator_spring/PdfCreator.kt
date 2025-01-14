@@ -28,7 +28,7 @@ class PdfCreator(private val abrechnungProperties: AbrechnungProperties) {
         stundenleistungPromptResult: BigDecimal
     ): String {
         val kunde = UnternehmenPropertiesParser.parse(unternehmenPromptResult.kundenProperties)
-        RechnungenFolderCreator.createFolderIfNotPresent(kunde.name)
+        RechnungenFolderCreator.createFolderIfNotPresent(kunde.shortName)
 
         val pdfFileName = getPdfFileName(kunde, leistungszeitraumPromptResult)
         val writer = PdfWriter(pdfFileName)
@@ -60,7 +60,7 @@ class PdfCreator(private val abrechnungProperties: AbrechnungProperties) {
     }
 
     private fun getPdfFileName(kunde: Unternehmen, leistungszeitraumPromptResult: LeistungszeitraumPromptResult) =
-        "${RechnungenFolderCreator.destination}/${kunde.name}/sellemond_${kunde.name}" +
+        "${RechnungenFolderCreator.destination}/${kunde.shortName}/sellemond_${kunde.shortName}" +
                 "_${leistungszeitraumPromptResult.month}_${leistungszeitraumPromptResult.year}.pdf"
 
     private fun getLeistungszeitraumParagraph(
@@ -68,7 +68,7 @@ class PdfCreator(private val abrechnungProperties: AbrechnungProperties) {
         leistungszeitraumPromptResult: LeistungszeitraumPromptResult
     ) = Paragraph(
         RechnungUidGenerator.getUid(
-            kunde.name,
+            kunde.shortName,
             leistungszeitraumPromptResult.year,
             leistungszeitraumPromptResult.month
         )

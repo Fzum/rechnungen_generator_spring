@@ -1,11 +1,12 @@
 import model.Adresse
 import model.Contact
 import model.Unternehmen
-import java.util.Properties
+import java.util.*
 
 class UnternehmenPropertiesParser {
     companion object {
         fun parse(properties: Properties) = Unternehmen(
+            properties.getProperty("short-name"),
             properties.getProperty("name"),
             getAdresse(properties),
             properties.getProperty("uid"),

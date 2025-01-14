@@ -1,47 +1,18 @@
 package at.sellemond.software.rechnung_generator_spring.prompt
 
-import exception.SelectionOutOfBoundException
 import at.sellemond.software.rechnung_generator_spring.util.toEuroFormat
 import java.time.LocalDateTime
-import java.time.temporal.TemporalAdjusters.*
+import java.time.Month.JANUARY
+import java.time.temporal.TemporalAdjusters.lastDayOfMonth
 
 data class LeistungszeitraumPromptResult(val year: Int, val month: Int, val zeitraum: String)
 
-private fun printSelection(x: Map.Entry<Int, Int>) = println("${x.key}: ${x.value}")
-
 class LeistungszeitraumPrompt {
     fun promptUser(): LeistungszeitraumPromptResult {
-        println("\n")
-        println("Für welches Jahr soll die Rechnung erzeugt werden?")
         val now = LocalDateTime.now()
-        val currentYear = now.year
 
-        val yearSelectionOptions = mapOf(0 to currentYear, 1 to currentYear - 1)
-        yearSelectionOptions.forEach { printSelection(it) }
-
-        val yearSelection = readlnOrNull()?.toInt()!!
-        if (yearSelection < 0 || yearSelection > yearSelectionOptions.size - 1) {
-            throw SelectionOutOfBoundException()
-        }
-
-        println("Für welches Monat soll die Rechnung erzeugt werden?")
-        val currentMonth = now.monthValue
-
-        val monthSelectionOptions =
-            if (currentMonth == 1)
-                mapOf(0 to 12, 1 to currentMonth)
-            else
-                mapOf(0 to currentMonth, 1 to currentMonth - 1)
-
-        monthSelectionOptions.forEach { printSelection(it) }
-
-        val monthSelection = readlnOrNull()?.toInt()!!
-        if (monthSelection < 0 || monthSelection > monthSelectionOptions.size - 1) {
-            throw SelectionOutOfBoundException()
-        }
-
-        val year = yearSelectionOptions[yearSelection]!!
-        val month = monthSelectionOptions[monthSelection]!!
+        val year = if (now.month == JANUARY) now.year - 1 else now.year
+        val month = if (now.monthValue == 1) 12 else now.monthValue - 1
 
         return LeistungszeitraumPromptResult(year, month, getLeistungszeitraumFormatted(year, month))
     }

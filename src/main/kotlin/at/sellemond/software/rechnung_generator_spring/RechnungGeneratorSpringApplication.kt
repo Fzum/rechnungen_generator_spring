@@ -34,7 +34,7 @@ class RechnungGeneratorCommandLineRunner(
         val pdfFileName = pdfCreator.createRechnung(
             unternehmenPromptResult,
             leistungszeitraumPromptResult,
-            StundenleistungPrompt().prompt()
+            StundenleistungPrompt().prompt(leistungszeitraumPromptResult)
         )
 
         val zeitraum = leistungszeitraumPromptResult.zeitraum

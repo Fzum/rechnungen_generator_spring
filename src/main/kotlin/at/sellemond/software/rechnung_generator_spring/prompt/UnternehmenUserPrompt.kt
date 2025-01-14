@@ -1,7 +1,8 @@
 package at.sellemond.software.rechnung_generator_spring.prompt
 
 import UnternehmenPropertiesParser
-import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenResourceFolderOption.*
+import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenResourceFolderOption.KUNDEN
+import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenResourceFolderOption.UNTERNEHMEN
 import exception.SelectionOutOfBoundException
 import java.io.InputStream
 import java.util.*
@@ -15,10 +16,7 @@ enum class UnternehmenResourceFolderOption(val folder: String) {
 
 class UnternehmenUserPrompt {
     fun promptUser(): UnternehmenPromptResult {
-        println("Für welchen Kunden soll die Rechnung generiert werden?")
         val kundenProperties = getPropertiesFromPrompt(KUNDEN)
-
-        println("Für welches Unternehmen soll die Rechnung generiert werden?")
         val unternehmenProperties = getPropertiesFromPrompt(UNTERNEHMEN)
 
         return UnternehmenPromptResult(kundenProperties, unternehmenProperties)
@@ -29,10 +27,11 @@ class UnternehmenUserPrompt {
         if (options.size == 1) {
             val properties = Properties()
             properties.load(getPropertiesFromPromptSelection(options, 0, folderOption))
-            println("${options[0]} wird automatisch ausgewählt (keine andere Auswahl verfügbar).")
 
             return properties
         }
+
+        println("Für welchen ${folderOption.name} soll die Rechnung generiert werden?")
 
         options.forEachIndexed { index, s -> println("${index}: $s") }
 
@@ -59,6 +58,6 @@ class UnternehmenUserPrompt {
     // can be extended if more kunden arise
     // 🧨 has to be named like the corresponding properties file in /resources/kunden
     private fun getPromptOptions(folderOption: UnternehmenResourceFolderOption) =
-        if (folderOption == KUNDEN) listOf("softwareXperts")
+        if (folderOption == KUNDEN) listOf("nook")
         else listOf("sellemond")
 }
