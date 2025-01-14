@@ -35,6 +35,7 @@ internal class UnternehmenPropertiesParserTest {
 
         assertThat(unternehmen.uid).isEqualTo("uid")
         assertThat(unternehmen.name).isEqualTo("name")
+        assertThat(unternehmen.shortName).isEqualTo("short-name")
 
         assertThat(unternehmen.contact.telNr).isEqualTo("telNr")
         assertThat(unternehmen.contact.website).isEqualTo("website")
