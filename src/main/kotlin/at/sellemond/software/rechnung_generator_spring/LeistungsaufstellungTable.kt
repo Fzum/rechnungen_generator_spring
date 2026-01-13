@@ -1,3 +1,4 @@
+import at.sellemond.software.rechnung_generator_spring.util.formatCurrency
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
@@ -31,7 +32,7 @@ class LeistungsaufstellungTable : Table(6) {
     }
 
     fun addStundensatz(stundensatz: Double): LeistungsaufstellungTable {
-        addParagraphToCol(3, stundensatz.toString())
+        addParagraphToCol(3, formatCurrency(BigDecimal.valueOf(stundensatz)))
         return this
     }
 
@@ -41,7 +42,7 @@ class LeistungsaufstellungTable : Table(6) {
     }
 
     fun addBetrag(betrag: BigDecimal): LeistungsaufstellungTable {
-        addParagraphToCol(5, betrag.toString())
+        addParagraphToCol(5, formatCurrency(betrag))
         return this
     }
 

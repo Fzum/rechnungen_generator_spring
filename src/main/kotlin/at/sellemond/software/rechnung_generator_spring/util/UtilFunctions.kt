@@ -1,6 +1,7 @@
 package at.sellemond.software.rechnung_generator_spring.util
 
 import java.math.BigDecimal
+import java.math.RoundingMode.HALF_UP
 import java.net.URLEncoder
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -10,7 +11,9 @@ fun toEuroFormat(localDateTime: LocalDateTime): String = DateTimeFormatter
     .format(localDateTime)
 
 fun calculateNettobetrag(stundenleistung: BigDecimal, stundensatz: Double): BigDecimal =
-    stundenleistung.multiply(BigDecimal.valueOf(stundensatz))
+    stundenleistung.multiply(BigDecimal.valueOf(stundensatz)).setScale(2, HALF_UP)
+
+fun formatCurrency(amount: BigDecimal): String = amount.setScale(2, HALF_UP).toString()
 
 fun sanitizeUrl(s: String) = URLEncoder.encode(
     s.replace("ue", "ü")
