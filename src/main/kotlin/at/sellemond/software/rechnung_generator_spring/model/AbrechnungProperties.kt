@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "abrechnung")
 data class AbrechnungProperties(
-    val stundensatz: Int,
+    val stundensatz: Double,
     val einheit: String,
     val taetigkeit: String,
     val ust: Int,

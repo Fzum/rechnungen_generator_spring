@@ -9,9 +9,24 @@ import java.math.BigDecimal
 class NettobetragCalculatorTest {
 
     @ParameterizedTest
-    @CsvSource(value = ["1;10", "1.25;12.50", "1.5;15.0", "1.75;17.50", "2;20"], delimiter = ';')
-    fun `should calculate nettopreis with constant stundensatz`(input: BigDecimal, expected: BigDecimal) {
-        val calculateNettobetrag = calculateNettobetrag(input, 10)
-        assertThat(calculateNettobetrag).isEqualTo(expected)
+    @CsvSource(
+        value = [
+            "1;10;10",
+            "1.25;10;12.50",
+            "1.5;10;15.0",
+            "1.75;10;17.50",
+            "2;10;20",
+            "1;96.82;96.82",
+            "2;96.82;193.64",
+        ],
+        delimiter = ';'
+    )
+    fun `should calculate nettopreis with constant stundensatz`(
+        input: BigDecimal,
+        stundensatz: Double,
+        expected: BigDecimal
+    ) {
+        val calculateNettobetrag = calculateNettobetrag(input, stundensatz)
+        assertThat(calculateNettobetrag.stripTrailingZeros()).isEqualTo(expected.stripTrailingZeros())
     }
 }

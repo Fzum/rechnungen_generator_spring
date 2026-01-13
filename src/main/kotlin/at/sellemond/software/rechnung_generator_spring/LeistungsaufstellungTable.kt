@@ -30,7 +30,7 @@ class LeistungsaufstellungTable : Table(6) {
         return this
     }
 
-    fun addStundensatz(stundensatz: Int): LeistungsaufstellungTable {
+    fun addStundensatz(stundensatz: Double): LeistungsaufstellungTable {
         addParagraphToCol(3, stundensatz.toString())
         return this
     }

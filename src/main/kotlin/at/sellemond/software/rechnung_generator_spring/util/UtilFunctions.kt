@@ -9,8 +9,8 @@ fun toEuroFormat(localDateTime: LocalDateTime): String = DateTimeFormatter
     .ofPattern("dd.MM.yyyy")
     .format(localDateTime)
 
-fun calculateNettobetrag(stundenleistung: BigDecimal, stundensatz: Int): BigDecimal =
-    stundenleistung.multiply(BigDecimal(stundensatz))
+fun calculateNettobetrag(stundenleistung: BigDecimal, stundensatz: Double): BigDecimal =
+    stundenleistung.multiply(BigDecimal.valueOf(stundensatz))
 
 fun sanitizeUrl(s: String) = URLEncoder.encode(
     s.replace("ue", "ü")
