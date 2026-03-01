@@ -1,0 +1,50 @@
+import at.sellemond.software.rechnung_generator_spring.util.formatCurrency
+import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Table
+import java.math.BigDecimal
+
+class LeistungsaufstellungTable : Table(6) {
+    init {
+        useAllAvailableWidth()
+        val headerCells = listOf("Menge", "Einheit", "Tätigkeit", "Stundensatz", "Ust%", "Nettobetrag")
+        headerCells
+            .map { Paragraph(it) }
+            .forEach {
+                addHeaderCell(it)
+                addCell(Cell())
+            }
+    }
+
+    fun addMenge(menge: BigDecimal): LeistungsaufstellungTable {
+        addParagraphToCol(0, menge.toString())
+        return this
+    }
+
+    fun addEinheit(einheit: String): LeistungsaufstellungTable {
+        addParagraphToCol(1, einheit)
+        return this
+    }
+
+    fun addTaetigkeit(taetigkeit: String): LeistungsaufstellungTable {
+        addParagraphToCol(2, taetigkeit)
+        return this
+    }
+
+    fun addStundensatz(stundensatz: Double): LeistungsaufstellungTable {
+        addParagraphToCol(3, formatCurrency(BigDecimal.valueOf(stundensatz)))
+        return this
+    }
+
+    fun addUst(ust: Int): LeistungsaufstellungTable {
+        addParagraphToCol(4, ust.toString())
+        return this
+    }
+
+    fun addBetrag(betrag: BigDecimal): LeistungsaufstellungTable {
+        addParagraphToCol(5, formatCurrency(betrag))
+        return this
+    }
+
+    private fun addParagraphToCol(col: Int, content: String) = getCell(0, col).add(Paragraph(content))
+}

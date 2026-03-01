@@ -1,0 +1,16 @@
+email:
+  subject: Rechnung im Leistungszeitraum {{leistungszeitraum}}
+  body: |
+    Sehr geehrte Damen und Herren,
+
+    hiermit sende ich Ihnen die Rechnung fuer den Leistungszeitraum {{leistungszeitraum}}.
+
+    Mit freundlichen Gruessen
+    Test Absender
+abrechnung:
+  stundensatz: 100.00
+  einheit: Stunden
+  taetigkeit: Testleistung
+  ust: 20
+  iban: AT00 0000 0000 0000 0000
+  zahlungsbedingungen: 30 Tage ohne Abzuege
