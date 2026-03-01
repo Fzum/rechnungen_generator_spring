@@ -1,6 +1,7 @@
 package at.sellemond.software.rechnung_generator_spring.prompt
 
 import UnternehmenPropertiesParser
+import at.sellemond.software.rechnung_generator_spring.ExternalConfigLoader
 import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenResourceFolderOption.KUNDEN
 import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenResourceFolderOption.UNTERNEHMEN
 import exception.SelectionOutOfBoundException
@@ -51,13 +52,21 @@ class UnternehmenUserPrompt {
         selectionIndex: Int,
         resourceFolder: UnternehmenResourceFolderOption
     ): InputStream? {
-        val file = "${resourceFolder.folder}/${selectionList[selectionIndex]}.properties"
+        val name = selectionList[selectionIndex]
+        // Try external file first (directory next to the JAR)
+        val externalStream = ExternalConfigLoader.loadExternalProperties(resourceFolder.folder, name)
+        if (externalStream != null) return externalStream
+        // Fall back to bundled resource
+        val file = "${resourceFolder.folder}/$name.properties"
         return UnternehmenPropertiesParser::class.java.getResourceAsStream(file)
     }
 
-    // can be extended if more kunden arise
-    // 🧨 has to be named like the corresponding properties file in /resources/kunden
-    private fun getPromptOptions(folderOption: UnternehmenResourceFolderOption) =
-        if (folderOption == KUNDEN) listOf("nook")
+    // Returns options from external directories if present, otherwise falls back to bundled defaults.
+    private fun getPromptOptions(folderOption: UnternehmenResourceFolderOption): List<String> {
+        val externalOptions = ExternalConfigLoader.listExternalOptions(folderOption.folder)
+        if (externalOptions.isNotEmpty()) return externalOptions
+        // Fallback to bundled defaults
+        return if (folderOption == KUNDEN) listOf("nook")
         else listOf("sellemond")
+    }
 }
