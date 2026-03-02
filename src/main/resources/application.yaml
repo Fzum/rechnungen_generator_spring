@@ -14,3 +14,19 @@ abrechnung:
   ust: 20
   iban: AT00 0000 0000 0000 0000
   zahlungsbedingungen: 30 Tage ohne Abzuege
+upload:
+  # Supported targets: none | local | ftp | google-drive
+  # Specify the target as a command-line argument to override at startup:
+  #   java -jar app.jar --upload.target=ftp
+  target: none
+  local:
+    destination-path: ""
+  ftp:
+    host: ""
+    port: 21
+    username: ""
+    password: ""
+    remote-path: /
+  google-drive:
+    credentials-file: ""
+    folder-id: ""

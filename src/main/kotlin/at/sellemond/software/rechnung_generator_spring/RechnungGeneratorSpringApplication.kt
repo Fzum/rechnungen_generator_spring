@@ -4,6 +4,7 @@ import UnternehmenPropertiesParser
 import at.sellemond.software.rechnung_generator_spring.prompt.LeistungszeitraumPrompt
 import at.sellemond.software.rechnung_generator_spring.prompt.StundenleistungPrompt
 import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenUserPrompt
+import at.sellemond.software.rechnung_generator_spring.upload.DocumentUploader
 import at.sellemond.software.rechnung_generator_spring.termination.email.EmailInitiator
 import at.sellemond.software.rechnung_generator_spring.termination.pathopener.PathOpener
 import org.springframework.boot.CommandLineRunner
@@ -24,7 +25,8 @@ fun main(args: Array<String>) {
 class RechnungGeneratorCommandLineRunner(
     private val emailInitiator: EmailInitiator,
     private val pathOpener: PathOpener,
-    private val pdfCreator: PdfCreator
+    private val pdfCreator: PdfCreator,
+    private val documentUploader: DocumentUploader
 ) : CommandLineRunner {
 
     override fun run(vararg args: String?) {
@@ -36,6 +38,8 @@ class RechnungGeneratorCommandLineRunner(
             leistungszeitraumPromptResult,
             StundenleistungPrompt().prompt(leistungszeitraumPromptResult)
         )
+
+        documentUploader.upload(pdfFileName)
 
         val zeitraum = leistungszeitraumPromptResult.zeitraum
         val kunde = UnternehmenPropertiesParser.parse(unternehmenPromptResult.kundenProperties)
