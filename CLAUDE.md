@@ -50,6 +50,8 @@ Side effects that touch the desktop are abstracted behind interfaces and selecte
 - All monetary math uses `BigDecimal`.
 
 <!-- SPECKIT START -->
-For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
+Active feature plan: `specs/001-headless-invoice-cli/plan.md` (headless/non-interactive CLI mode,
+`HoursProvider` port with manual + Harvest implementations, Apple Mail draft with invoice +
+Harvest-report attachments). See its `research.md`, `data-model.md`, `contracts/`, and
+`quickstart.md` for technologies, structure, and validation steps.
 <!-- SPECKIT END -->
