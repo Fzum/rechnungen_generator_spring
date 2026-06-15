@@ -2,7 +2,8 @@ package at.sellemond.software.rechnung_generator_spring.cli
 
 import UnternehmenPropertiesParser
 import at.sellemond.software.rechnung_generator_spring.PdfCreator
-import at.sellemond.software.rechnung_generator_spring.hours.ManualHoursProvider
+import at.sellemond.software.rechnung_generator_spring.harvest.HarvestException
+import at.sellemond.software.rechnung_generator_spring.hours.HoursProviders
 import at.sellemond.software.rechnung_generator_spring.model.AbrechnungProperties
 import at.sellemond.software.rechnung_generator_spring.prompt.LeistungszeitraumFactory
 import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenPromptResult
@@ -15,9 +16,8 @@ import at.sellemond.software.rechnung_generator_spring.util.calculateUstBetrag
 import org.springframework.boot.ApplicationArguments
 import org.springframework.stereotype.Component
 import java.io.File
-import java.math.BigDecimal
 import java.math.RoundingMode.HALF_UP
-import java.util.Properties
+import java.nio.file.Path
 import kotlin.system.exitProcess
 
 /**
@@ -33,6 +33,7 @@ class NonInteractiveInvoiceRunner(
     private val emailInitiator: EmailInitiator,
     private val pathOpener: PathOpener,
     private val abrechnungProperties: AbrechnungProperties,
+    private val hoursProviders: HoursProviders,
     private val applicationArguments: ApplicationArguments,
 ) {
 
@@ -47,6 +48,9 @@ class NonInteractiveInvoiceRunner(
 
         try {
             emitResult(args.format, generate(args))
+        } catch (e: HarvestException) {
+            emitError(args.format, e.code, e.message)
+            exitProcess(exitCodeFor(e.code))
         } catch (e: CliValidationException) {
             emitError(args.format, e.code, e.message)
             exitProcess(exitCodeFor(e.code))
@@ -60,7 +64,7 @@ class NonInteractiveInvoiceRunner(
         val customerProps = UnternehmenPropertiesLoader.load("kunden", args.customer)
         val issuerProps = UnternehmenPropertiesLoader.load("unternehmen", args.issuer)
         val period = LeistungszeitraumFactory.create(args.year, args.month)
-        val hours = resolveHours(args, customerProps)
+        val hours = hoursProviders.resolve(args.hoursSource, args.hours).fetch(args.year, args.month, customerProps)
 
         val pdfFileName = pdfCreator.createRechnung(UnternehmenPromptResult(customerProps, issuerProps), period, hours)
         val pdfAbsPath = File(pdfFileName).absolutePath
@@ -77,8 +81,9 @@ class NonInteractiveInvoiceRunner(
         val attachments = mutableListOf<String>()
 
         if (args.mail) {
-            attachments.add(pdfAbsPath)
-            runCatching { emailInitiator.initiateEmail(kunde, period.zeitraum) }
+            val files: List<Path> = listOfNotNull(Path.of(pdfAbsPath), args.reportPdfPath?.toAbsolutePath())
+            files.forEach { attachments.add(it.toString()) }
+            runCatching { emailInitiator.initiateEmail(kunde, period.zeitraum, files) }
                 .onFailure { warnings.add("Mail draft failed: ${it.message}") }
         }
 
@@ -102,11 +107,6 @@ class NonInteractiveInvoiceRunner(
             attachments = attachments,
             warnings = warnings,
         )
-    }
-
-    private fun resolveHours(args: InvoiceCliArgs, customer: Properties): BigDecimal {
-        args.hours?.let { return ManualHoursProvider(it).fetch(args.year, args.month, customer) }
-        throw CliValidationException("MISSING_HOURS", "Harvest hours source is not yet available; pass --hours")
     }
 
     private fun emitResult(format: OutputFormat, result: GenerationResult) = when (format) {

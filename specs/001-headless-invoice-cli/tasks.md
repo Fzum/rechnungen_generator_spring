@@ -82,15 +82,15 @@ Harvest report PDF); never sent.
 
 ### Tests for User Story 2 (write first, ensure they FAIL)
 
-- [ ] T020 [P] [US2] `AppleMailScriptBuilderTest` — `"`/`\` escaping, two `POSIX file` attachments, recipient set, period-templated + umlaut-fixed subject/body, **no `send`** in `TEST/termination/email/AppleMailScriptBuilderTest.kt`
+- [X] T020 [P] [US2] `AppleMailScriptBuilderTest` — `"`/`\` escaping, two `POSIX file` attachments, recipient set, period-templated + umlaut-fixed subject/body, **no `send`** in `TEST/termination/email/AppleMailScriptBuilderTest.kt`
 
 ### Implementation for User Story 2
 
-- [ ] T021 [US2] `AppleMailScriptBuilder` (pure osascript text from recipient/subject/body/attachments) — satisfies T020 in `BASE/termination/email/AppleMailScriptBuilder.kt`
-- [ ] T022 [US2] Change `EmailInitiator.initiateEmail(kunde, zeitraum, attachments: List<Path>)` signature in `BASE/termination/email/EmailInitiator.kt`
-- [ ] T023 [US2] Rewrite `MacEmailInitiator` to write the built script to a temp `.scpt` and run `osascript` (visible draft, never send); update `WindowsEmailInitiator` to the new signature in `BASE/termination/email/MacEmailInitiator.kt` and `BASE/termination/email/WindowsEmailInitiator.kt`
-- [ ] T024 [US2] In `NonInteractiveInvoiceRunner`, when `--mail`, call `initiateEmail` with `[invoicePdf, reportPdf]` and populate `GenerationResult.attachments` in `BASE/cli/NonInteractiveInvoiceRunner.kt`
-- [ ] T025 [US2] Extend `InvoiceCliArgsParser` with `--report-pdf` (required + readable when `--mail=true`, else `MISSING_REPORT_PDF`/exit `2`) and add a parser test case in `BASE/cli/InvoiceCliArgsParser.kt` + `TEST/cli/InvoiceCliArgsParserTest.kt`
+- [X] T021 [US2] `AppleMailScriptBuilder` (pure osascript text from recipient/subject/body/attachments) — satisfies T020 in `BASE/termination/email/AppleMailScriptBuilder.kt`
+- [X] T022 [US2] Change `EmailInitiator.initiateEmail(kunde, zeitraum, attachments: List<Path>)` signature in `BASE/termination/email/EmailInitiator.kt`
+- [X] T023 [US2] Rewrite `MacEmailInitiator` to write the built script to a temp `.scpt` and run `osascript` (visible draft, never send); update `WindowsEmailInitiator` to the new signature in `BASE/termination/email/MacEmailInitiator.kt` and `BASE/termination/email/WindowsEmailInitiator.kt`
+- [X] T024 [US2] In `NonInteractiveInvoiceRunner`, when `--mail`, call `initiateEmail` with `[invoicePdf, reportPdf]` and populate `GenerationResult.attachments` in `BASE/cli/NonInteractiveInvoiceRunner.kt`
+- [X] T025 [US2] Extend `InvoiceCliArgsParser` with `--report-pdf` (required + readable when `--mail=true`, else `MISSING_REPORT_PDF`/exit `2`) and add a parser test case in `BASE/cli/InvoiceCliArgsParser.kt` + `TEST/cli/InvoiceCliArgsParserTest.kt`
 
 **Checkpoint**: US2 quickstart passes — draft with exactly two attachments, unsent; missing report fails clearly.
 
@@ -104,16 +104,16 @@ Harvest report PDF); never sent.
 
 ### Tests for User Story 3 (write first, ensure they FAIL)
 
-- [ ] T026 [P] [US3] `HarvestHoursProviderTest` — response row → exact `BigDecimal` billable hours; no row for the configured project id → error (stubbed client) in `TEST/hours/HarvestHoursProviderTest.kt`
+- [X] T026 [P] [US3] `HarvestHoursProviderTest` — response row → exact `BigDecimal` billable hours; no row for the configured project id → error (stubbed client) in `TEST/hours/HarvestHoursProviderTest.kt`
 
 ### Implementation for User Story 3
 
-- [ ] T027 [P] [US3] `HarvestProperties` `@ConfigurationProperties(prefix="harvest")` (`account-id`/`access-token`/`base-url`, env-backed) in `BASE/harvest/HarvestProperties.kt`
-- [ ] T028 [US3] `HarvestTimeReportClient` (`java.net.http` GET `/reports/time/projects?from&to` with auth headers) + row model in `BASE/harvest/HarvestTimeReportClient.kt`
-- [ ] T029 [US3] `HarvestHoursProvider` — derive `from`/`to` from period, find row by `project_id == harvest-project-id` (read from customer `Properties`), read `billable_hours` as `BigDecimal`; satisfies T026 in `BASE/hours/HarvestHoursProvider.kt`
-- [ ] T030 [US3] `HoursProviders` selecting `HoursProvider` by `HoursSource`; wire into `NonInteractiveInvoiceRunner`; explicit `--hours` overrides Harvest in `BASE/hours/HoursProviders.kt`
-- [ ] T031 [US3] Add `harvest-project-id` example to `src/main/resources/kunden/test-kunde.properties` (read directly from customer `Properties`, no `model.Unternehmen` change)
-- [ ] T032 [US3] Extend `InvoiceCliArgsParser`/runner: `--hours-source`, require mapped project for harvest (`UNMAPPED_HARVEST_PROJECT`/exit `2`), Harvest failures → exit `3`; add parser test in `BASE/cli/InvoiceCliArgsParser.kt` + `TEST/cli/InvoiceCliArgsParserTest.kt`
+- [X] T027 [P] [US3] `HarvestProperties` `@ConfigurationProperties(prefix="harvest")` (`account-id`/`access-token`/`base-url`, env-backed) in `BASE/harvest/HarvestProperties.kt`
+- [X] T028 [US3] `HarvestTimeReportClient` (`java.net.http` GET `/reports/time/projects?from&to` with auth headers) + row model in `BASE/harvest/HarvestTimeReportClient.kt`
+- [X] T029 [US3] `HarvestHoursProvider` — derive `from`/`to` from period, find row by `project_id == harvest-project-id` (read from customer `Properties`), read `billable_hours` as `BigDecimal`; satisfies T026 in `BASE/hours/HarvestHoursProvider.kt`
+- [X] T030 [US3] `HoursProviders` selecting `HoursProvider` by `HoursSource`; wire into `NonInteractiveInvoiceRunner`; explicit `--hours` overrides Harvest in `BASE/hours/HoursProviders.kt`
+- [X] T031 [US3] Add `harvest-project-id` example to `src/main/resources/kunden/test-kunde.properties` (read directly from customer `Properties`, no `model.Unternehmen` change)
+- [X] T032 [US3] Extend `InvoiceCliArgsParser`/runner: `--hours-source`, require mapped project for harvest (`UNMAPPED_HARVEST_PROJECT`/exit `2`), Harvest failures → exit `3`; add parser test in `BASE/cli/InvoiceCliArgsParser.kt` + `TEST/cli/InvoiceCliArgsParserTest.kt`
 
 **Checkpoint**: US3 quickstart passes — Harvest hours match, override works, failure exits `3`.
 
@@ -121,10 +121,10 @@ Harvest report PDF); never sent.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T033 [P] Update `README.md` with non-interactive flags, exit codes, env vars (`HARVEST_ACCOUNT_ID`/`HARVEST_ACCESS_TOKEN`), and example invocations
+- [X] T033 [P] Update `README.md` with non-interactive flags, exit codes, env vars (`HARVEST_ACCOUNT_ID`/`HARVEST_ACCESS_TOKEN`), and example invocations
 - [ ] T034 [P] Update the `create-invoice` skill to drive the jar via flags and parse the JSON result (drop the `expect`/two-pass discovery) in `~/.claude/skills/create-invoice/SKILL.md` (external to repo)
 - [ ] T035 Run full `quickstart.md` validation on macOS (smoke-test PDF, Apple Mail draft, Finder open per Constitution Dev Workflow)
-- [ ] T036 Final gate: `./mvnw package` and `./mvnw test` both green
+- [X] T036 Final gate: `./mvnw package` and `./mvnw test` both green
 
 ---
 

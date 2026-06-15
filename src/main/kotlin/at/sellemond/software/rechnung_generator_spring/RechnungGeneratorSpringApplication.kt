@@ -50,7 +50,7 @@ class RechnungGeneratorCommandLineRunner(
         val zeitraum = leistungszeitraumPromptResult.zeitraum
         val kunde = UnternehmenPropertiesParser.parse(unternehmenPromptResult.kundenProperties)
 
-        emailInitiator.initiateEmail(kunde, zeitraum)
+        emailInitiator.initiateEmail(kunde, zeitraum, emptyList())
 
         pathOpener.openRechnungFile(pdfFileName)
         pathOpener.openRechnungFolder(pdfFileName)
