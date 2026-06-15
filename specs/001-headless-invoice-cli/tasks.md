@@ -34,17 +34,17 @@ needs. Delivers no user story alone.
 
 **⚠️ CRITICAL**: No user-story work begins until this phase is complete.
 
-- [ ] T002 [P] Add `HoursSource` enum (`MANUAL`, `HARVEST`) in `BASE/cli/HoursSource.kt`
-- [ ] T003 [P] Add `OutputFormat` enum (`TEXT`, `JSON`) in `BASE/cli/OutputFormat.kt`
-- [ ] T004 [P] Write failing `UstBetragCalculatorTest` (exact `BigDecimal` USt for sample net/ust pairs) in `TEST/UstBetragCalculatorTest.kt`
-- [ ] T005 Add `calculateUstBetrag(net: BigDecimal, ust: Int): BigDecimal` and `replaceUmlauts(s: String)` to `BASE/util/UtilFunctions.kt`; refactor `PdfCreator.getUstBetrag` to call `calculateUstBetrag` (parity) — satisfies T004 in `BASE/PdfCreator.kt`
-- [ ] T006 Add `HoursProvider` interface `fetch(year: Int, month: Int, customer: Properties): BigDecimal` in `BASE/hours/HoursProvider.kt`
-- [ ] T007 [P] Implement `ManualHoursProvider` (returns the supplied value) in `BASE/hours/ManualHoursProvider.kt`
-- [ ] T008 Extract `UnternehmenPropertiesLoader` (`listOptions(folder)`, `load(folder, name)` — external via `ExternalConfigLoader`, else bundled) in `BASE/prompt/UnternehmenPropertiesLoader.kt`; refactor `UnternehmenUserPrompt` to use it (no behaviour change) in `BASE/prompt/UnternehmenUserPrompt.kt`
-- [ ] T009 Extract `LeistungszeitraumFactory.create(year, month): LeistungszeitraumPromptResult` (the `zeitraum` formatting) in `BASE/prompt/LeistungszeitraumFactory.kt`; refactor `LeistungszeitraumPrompt` to use it in `BASE/prompt/LeistungszeitraumPrompt.kt`
-- [ ] T010 Add `GenerationResult` + `GenerationError` DTOs (fields per data-model.md) in `BASE/cli/GenerationResult.kt`
-- [ ] T011 Add `src/main/resources/logback-spring.xml` routing the console appender to `System.err`; set `spring.main.banner-mode=off` in `src/main/resources/application.yaml`
-- [ ] T012 Add interactive-vs-non-interactive dispatch in `RechnungGeneratorCommandLineRunner.run()` — empty args → existing interactive flow **unchanged**; args present → delegate to injected `NonInteractiveInvoiceRunner` (stub for now) in `BASE/RechnungGeneratorSpringApplication.kt`
+- [X] T002 [P] Add `HoursSource` enum (`MANUAL`, `HARVEST`) in `BASE/cli/HoursSource.kt`
+- [X] T003 [P] Add `OutputFormat` enum (`TEXT`, `JSON`) in `BASE/cli/OutputFormat.kt`
+- [X] T004 [P] Write failing `UstBetragCalculatorTest` (exact `BigDecimal` USt for sample net/ust pairs) in `TEST/UstBetragCalculatorTest.kt`
+- [X] T005 Add `calculateUstBetrag(net: BigDecimal, ust: Int): BigDecimal` and `replaceUmlauts(s: String)` to `BASE/util/UtilFunctions.kt`; refactor `PdfCreator.getUstBetrag` to call `calculateUstBetrag` (parity) — satisfies T004 in `BASE/PdfCreator.kt`
+- [X] T006 Add `HoursProvider` interface `fetch(year: Int, month: Int, customer: Properties): BigDecimal` in `BASE/hours/HoursProvider.kt`
+- [X] T007 [P] Implement `ManualHoursProvider` (returns the supplied value) in `BASE/hours/ManualHoursProvider.kt`
+- [X] T008 Extract `UnternehmenPropertiesLoader` (`listOptions(folder)`, `load(folder, name)` — external via `ExternalConfigLoader`, else bundled) in `BASE/prompt/UnternehmenPropertiesLoader.kt`; refactor `UnternehmenUserPrompt` to use it (no behaviour change) in `BASE/prompt/UnternehmenUserPrompt.kt`
+- [X] T009 Extract `LeistungszeitraumFactory.create(year, month): LeistungszeitraumPromptResult` (the `zeitraum` formatting) in `BASE/prompt/LeistungszeitraumFactory.kt`; refactor `LeistungszeitraumPrompt` to use it in `BASE/prompt/LeistungszeitraumPrompt.kt`
+- [X] T010 Add `GenerationResult` + `GenerationError` DTOs (fields per data-model.md) in `BASE/cli/GenerationResult.kt`
+- [X] T011 Add `src/main/resources/logback-spring.xml` routing the console appender to `System.err`; set `spring.main.banner-mode=off` in `src/main/resources/application.yaml`
+- [X] T012 Add interactive-vs-non-interactive dispatch in `RechnungGeneratorCommandLineRunner.run()` — empty args → existing interactive flow **unchanged**; args present → delegate to injected `NonInteractiveInvoiceRunner` (stub for now) in `BASE/RechnungGeneratorSpringApplication.kt`
 
 **Checkpoint**: compiles, `./mvnw test` green, bare `java -jar …` still runs the interactive prompts unchanged.
 
@@ -58,16 +58,16 @@ needs. Delivers no user story alone.
 
 ### Tests for User Story 1 (write first, ensure they FAIL)
 
-- [ ] T013 [P] [US1] `InvoiceCliArgsParserTest` — issuer/customer existence (via loader), `YYYY-MM` parse + future rejection, manual hours required, format default, error/exit-code mapping in `TEST/cli/InvoiceCliArgsParserTest.kt`
-- [ ] T014 [P] [US1] `GenerationResultJsonWriterTest` — required fields, `BigDecimal` scale, single-object output, error-envelope shape (validate vs `contracts/generation-result.schema.json`) in `TEST/cli/GenerationResultJsonWriterTest.kt`
+- [X] T013 [P] [US1] `InvoiceCliArgsParserTest` — issuer/customer existence (via loader), `YYYY-MM` parse + future rejection, manual hours required, format default, error/exit-code mapping in `TEST/cli/InvoiceCliArgsParserTest.kt`
+- [X] T014 [P] [US1] `GenerationResultJsonWriterTest` — required fields, `BigDecimal` scale, single-object output, error-envelope shape (validate vs `contracts/generation-result.schema.json`) in `TEST/cli/GenerationResultJsonWriterTest.kt`
 
 ### Implementation for User Story 1
 
-- [ ] T015 [P] [US1] `InvoiceCliArgs` validated value object in `BASE/cli/InvoiceCliArgs.kt`
-- [ ] T016 [US1] `InvoiceCliArgsParser` (`ApplicationArguments` → `InvoiceCliArgs`; flags `--issuer/--customer/--period/--hours/--hours-source/--mail/--open/--format`; up-front validation) — satisfies T013 in `BASE/cli/InvoiceCliArgsParser.kt`
-- [ ] T017 [US1] `GenerationResultJsonWriter` (Jackson, sole JSON object / error envelope to stdout) — satisfies T014 in `BASE/cli/GenerationResultJsonWriter.kt`
-- [ ] T018 [US1] `NonInteractiveInvoiceRunner`: load issuer/customer `Properties` (loader) → build period (factory) → resolve hours (`ManualHoursProvider`) → build `UnternehmenPromptResult` → `PdfCreator.createRechnung(...)` → compute net/vat/gross → gate `PathOpener` by `--open` → write text/JSON in `BASE/cli/NonInteractiveInvoiceRunner.kt`
-- [ ] T019 [US1] Map outcomes to exit codes (`0/1/2`) and emit `GenerationError` via `exitProcess` on validation/unexpected failure in `BASE/cli/NonInteractiveInvoiceRunner.kt`
+- [X] T015 [P] [US1] `InvoiceCliArgs` validated value object in `BASE/cli/InvoiceCliArgs.kt`
+- [X] T016 [US1] `InvoiceCliArgsParser` (`ApplicationArguments` → `InvoiceCliArgs`; flags `--issuer/--customer/--period/--hours/--hours-source/--mail/--open/--format`; up-front validation) — satisfies T013 in `BASE/cli/InvoiceCliArgsParser.kt`
+- [X] T017 [US1] `GenerationResultJsonWriter` (Jackson, sole JSON object / error envelope to stdout) — satisfies T014 in `BASE/cli/GenerationResultJsonWriter.kt`
+- [X] T018 [US1] `NonInteractiveInvoiceRunner`: load issuer/customer `Properties` (loader) → build period (factory) → resolve hours (`ManualHoursProvider`) → build `UnternehmenPromptResult` → `PdfCreator.createRechnung(...)` → compute net/vat/gross → gate `PathOpener` by `--open` → write text/JSON in `BASE/cli/NonInteractiveInvoiceRunner.kt`
+- [X] T019 [US1] Map outcomes to exit codes (`0/1/2`) and emit `GenerationError` via `exitProcess` on validation/unexpected failure in `BASE/cli/NonInteractiveInvoiceRunner.kt`
 
 **Checkpoint**: US1 quickstart passes (headless manual-hours JSON; interactive unchanged). **Shippable MVP.**
 

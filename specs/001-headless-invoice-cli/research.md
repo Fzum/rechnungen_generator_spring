@@ -33,10 +33,13 @@ Re-based on the actual flat architecture. **0 NEEDS CLARIFICATION remain.**
 
 ## R4. JSON serialization
 
-- **Decision**: Jackson (`jackson-module-kotlin`, already on the Spring Boot classpath) serializes a
-  `GenerationResult` DTO; `BigDecimal` amounts serialize as JSON numbers with scale preserved.
-- **Rationale**: Available; deterministic field order via the DTO; no new dependency.
-- **Alternatives**: manual string building (rejected: escaping/precision bugs).
+- **Decision (corrected during implementation)**: Jackson is **not** on the classpath
+  (`spring-boot-starter`, not `-web`). Hand-roll a tiny `GenerationResultJsonWriter` for the small,
+  flat `GenerationResult`/`GenerationError` with explicit string escaping and `BigDecimal.toPlainString()`
+  (scale preserved). No dependency added.
+- **Rationale**: Avoids a new dependency for one flat object (Constitution V); full control of number
+  formatting and escaping; unit-tested.
+- **Alternatives**: add `jackson-module-kotlin` (rejected: new dependency for trivial gain).
 
 ## R5. Invoice totals parity (PdfCreator vs JSON result)
 

@@ -15,16 +15,19 @@ fun calculateNettobetrag(stundenleistung: BigDecimal, stundensatz: Double): BigD
 
 fun formatCurrency(amount: BigDecimal): String = amount.setScale(2, HALF_UP).toString()
 
-fun sanitizeUrl(s: String) = URLEncoder.encode(
+fun replaceUmlauts(s: String): String =
     s.replace("ue", "ü")
         .replace("ae", "ä")
         .replace("oe", "ö")
         .replace("Ue", "Ü")
         .replace("Ae", "Ä")
         .replace("Oe", "Ö")
-        .replace("ss", "ß"),
-    "UTF-8"
-).replace("+", "%20")
+        .replace("ss", "ß")
+
+fun sanitizeUrl(s: String) = URLEncoder.encode(replaceUmlauts(s), "UTF-8").replace("+", "%20")
+
+fun calculateUstBetrag(nettobetrag: BigDecimal, ust: Int): BigDecimal =
+    nettobetrag.times(BigDecimal(ust).divide(BigDecimal(100)))
 
 fun replacePlaceholder(input: String, placeholder: String, replacement: String) =
     input.replace("{{$placeholder}}", replacement)

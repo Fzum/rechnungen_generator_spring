@@ -9,6 +9,7 @@ import at.sellemond.software.rechnung_generator_spring.prompt.UnternehmenPromptR
 import at.sellemond.software.rechnung_generator_spring.util.RechnungUidGenerator
 import at.sellemond.software.rechnung_generator_spring.util.alignToBottom
 import at.sellemond.software.rechnung_generator_spring.util.calculateNettobetrag
+import at.sellemond.software.rechnung_generator_spring.util.calculateUstBetrag
 import at.sellemond.software.rechnung_generator_spring.util.formatCurrency
 import at.sellemond.software.rechnung_generator_spring.util.toEuroFormat
 import com.itextpdf.kernel.pdf.PdfDocument
@@ -91,8 +92,7 @@ class PdfCreator(private val abrechnungProperties: AbrechnungProperties) {
         abrechnungProperties: AbrechnungProperties,
         nettobetrag: BigDecimal
     ): Pair<Paragraph, BigDecimal> {
-        val ustValue = BigDecimal(abrechnungProperties.ust)
-        val ustBetrag = nettobetrag.times((ustValue.divide(BigDecimal(100))))
+        val ustBetrag = calculateUstBetrag(nettobetrag, abrechnungProperties.ust)
         return Pair(
             Paragraph("${abrechnungProperties.ust}% Ust: ${formatCurrency(ustBetrag)}")
                 .setTextAlignment(TextAlignment.RIGHT)
