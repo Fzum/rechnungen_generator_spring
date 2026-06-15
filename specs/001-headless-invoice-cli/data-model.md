@@ -1,103 +1,93 @@
 # Phase 1 Data Model: Headless Invoice CLI
 
-Most entities already exist in the domain core and are **reused unchanged**. New types are marked
-▲. The feature adds no persistence — these are in-memory value objects plus two config additions.
+Re-based on the actual flat code. Existing types are reused; new types are marked ▲. No persistence
+is added.
 
-## Reused domain entities (unchanged)
+## Reused existing types (unchanged)
 
-- **Invoice** — issuer, customer, number, issueDate, period, hours (`BigDecimal`), billing
-  (`BillingDetails`), totals (`BillingTotals`). Produced by `GenerateInvoiceUseCase`.
-- **Company** — shortName, name, address, contact (incl. email), uid. Used for both customer and
-  issuer roles via `CompanyConfigRepository`.
-- **BillingDetails** — hourlyRate, unit, activity, vatRate, iban, paymentTerms (from
-  `AbrechnungProperties`).
-- **BillingTotals** — net, vat, gross (`BigDecimal`), from `BillingCalculator`. Unchanged math.
-- **InvoicePeriod** — month, year, label; built by `InvoicePeriodFactory`. Drives Harvest
-  `from`/`to` (first/last day of month).
+- **`model.Unternehmen`** — `shortName, name, adresse: Adresse, uid, contact: Contact`. Used for
+  **both** customer (kunde) and issuer (unternehmen). Parsed from `Properties` by
+  `UnternehmenPropertiesParser`.
+- **`model.Adresse`** — `strasse, stadt, land`. **`model.Contact`** — `telNr, website, email`.
+- **`AbrechnungProperties`** (`@ConfigurationProperties("abrechnung")`) — `stundensatz: Double`,
+  `einheit, taetigkeit, ust: Int, iban, zahlungsbedingungen`.
+- **`EmailProperties`** (`@ConfigurationProperties("email")`) — `subject, body`.
+- **`UnternehmenPromptResult`** — `kundenProperties: Properties, unternehmenProperties: Properties`.
+- **`LeistungszeitraumPromptResult`** — `year: Int, month: Int, zeitraum: String`.
+- Helpers: `calculateNettobetrag(hours, stundensatz)`, `RechnungUidGenerator.getUid(short, year,
+  month)` → `"Rechnung <short>-<year>/<MM>"`, `PdfCreator.createRechnung(...)` → PDF path string.
 
 ## ▲ New / changed types
 
-### InvoiceCliArgs (▲ value object, `cli/`)
-Parsed and validated representation of the non-interactive invocation.
+### InvoiceCliArgs (▲ `cli/`)
+Validated representation of a non-interactive invocation.
 
 | Field | Type | Notes / validation |
 |-------|------|--------------------|
-| issuer | String | Must match an available issuer short-name |
-| customer | String | Must match an available customer short-name |
-| period | InvoicePeriod | Parsed from `YYYY-MM`; rejected if malformed or in the future |
+| issuer | String | matches an available `unternehmen/` short-name |
+| customer | String | matches an available `kunden/` short-name |
+| year, month | Int | from `--period=YYYY-MM`; month 1–12; not in the future |
 | hoursSource | HoursSource | `MANUAL` or `HARVEST` |
-| hours | BigDecimal? | Required when `hoursSource == MANUAL`; if present, overrides HARVEST |
-| reportPdfPath | Path? | Required when `mail == true`; file must exist and be readable |
-| mail | Boolean | Default `true` |
-| open | Boolean | Default `true` |
+| hours | BigDecimal? | required when `MANUAL`; if present, overrides `HARVEST` |
+| reportPdfPath | Path? | required when `mail == true`; file must exist + be readable |
+| mail | Boolean | default `true` |
+| open | Boolean | default `true` |
 | format | OutputFormat | `TEXT` or `JSON`, default `TEXT` |
 
-**Invariants**: exactly one period; `hours` present ⇒ used regardless of source; `hoursSource ==
-HARVEST` ⇒ resolved customer has a non-blank `harvestProjectId`; `mail == true` ⇒ `reportPdfPath`
-exists.
+### HoursSource (▲ enum) — `MANUAL | HARVEST`
+### OutputFormat (▲ enum) — `TEXT | JSON`
 
-### HoursSource (▲ enum)
-`MANUAL | HARVEST`. Selects the `HoursProvider` implementation per run.
-
-### GenerateInvoiceCommand (△ changed)
-Existing command gains: `hoursSource`, `reportPdfPath: Path?`, `openMail: Boolean`,
-`openFiles: Boolean`. Continues to carry issuer, customer, period; `hours` becomes resolved by the
-use case via the provider unless an explicit override is supplied.
-
-### GenerationResult (▲ DTO, application/cli boundary)
-The machine-readable outcome. Serialized to stdout JSON by `GenerationResultJsonWriter`.
+### GenerationResult (▲ DTO, `cli/`)
+Serialized to stdout JSON by `GenerationResultJsonWriter` (see
+`contracts/generation-result.schema.json`).
 
 | Field | Type | Source |
 |-------|------|--------|
-| invoiceNumber | String | `InvoiceNumberPolicy` |
-| pdfPath | String (abs) | `InvoiceDocumentPort.create` |
-| customer | String | command |
-| issuer | String | command |
-| period | String `YYYY-MM` | command |
+| invoiceNumber | String | `RechnungUidGenerator.getUid(customerShort, year, month)` |
+| pdfPath | String (absolute) | `File(createRechnung(...)).absolutePath` |
+| customer | String | `--customer` |
+| issuer | String | `--issuer` |
+| period | String `YYYY-MM` | from args |
 | hours | BigDecimal | resolved hours |
-| net | BigDecimal | totals |
-| vat | BigDecimal | totals |
-| gross | BigDecimal | totals |
-| attachments | List<String> | [pdfPath, reportPdfPath] when mail enabled |
-| warnings | List<String> | non-fatal side-effect failures (empty on a clean run) |
+| net | BigDecimal | `calculateNettobetrag(hours, stundensatz)` |
+| vat | BigDecimal | `calculateUstBetrag(net, ust)` |
+| gross | BigDecimal | net + vat |
+| attachments | List<String> | `[pdfPath, reportPdfPath]` when mail enabled, else `[]` |
+| warnings | List<String> | non-fatal side-effect failures |
 
 ### GenerationError (▲ DTO)
 `{ code: String, message: String }` — emitted instead of `GenerationResult` on failure, with a
-matching non-zero exit code (see contracts).
+matching non-zero exit code (codes in `contracts/cli-contract.md`).
 
-### EmailDraft (▲ conceptual, inside the mail adapter)
-recipient (customer email), subject, body (templated with period), attachments: exactly
-[invoicePdf, harvestReportPdf]. Never sent.
-
-### HarvestTimeReportRow (▲ adapter response model)
-Subset of the Harvest project time-report response: `projectId: Long`, `billableHours:
-BigDecimal`. Other fields ignored.
+### HarvestTimeReportRow (▲ `harvest/`, response model)
+Subset of the Harvest project time-report response: `projectId: Long`, `billableHours: BigDecimal`.
 
 ## ▲ Configuration additions
 
 ### Customer properties — `kunden/*.properties`
-Add one optional key:
+Add one optional key, required only when billing that customer via Harvest:
 ```
 harvest-project-id=12345678
 ```
-Required only when that customer is billed with `--hours-source=harvest`. Parsed alongside the
-existing customer fields; bundled `test-kunde.properties` gains an example value.
+Read directly from the customer `Properties` by `HarvestHoursProvider` (no change to
+`model.Unternehmen`). Bundled `kunden/test-kunde.properties` gains an example value.
 
 ### HarvestProperties — `@ConfigurationProperties(prefix = "harvest")`
-Bound from environment (per Constitution I, credentials never hardcoded/committed):
+Env-backed (Constitution I):
 
-| Property | Env (typical) | Notes |
-|----------|---------------|-------|
+| Property | Env (relaxed binding) | Notes |
+|----------|-----------------------|-------|
 | accountId | `HARVEST_ACCOUNT_ID` | Harvest account id |
 | accessToken | `HARVEST_ACCESS_TOKEN` | Personal access token |
 | baseUrl | (default `https://api.harvestapp.com/v2`) | Overridable for tests |
 
-## Port summary (hexagonal)
+## Abstractions (flat style)
 
-| Port | Direction | Impl(s) | Status |
-|------|-----------|---------|--------|
-| `HoursProvider` ▲ | out | `ManualHoursProvider`, `HarvestHoursProvider` | new |
-| `MailDraftPort` △ | out | `MacEmailInitiator` (AppleScript) | signature gains attachments |
-| `InvoiceDocumentPort` | out | `PdfCreator`-backed | unchanged |
-| `FileOpenPort` | out | `MacPathOpener` | unchanged (gated by `--open`) |
-| `CompanyConfigRepository` | out | properties-backed | parses new `harvest-project-id` |
+| Type | Role | Impl(s) | Status |
+|------|------|---------|--------|
+| `HoursProvider` ▲ | hours source | `ManualHoursProvider`, `HarvestHoursProvider` | new |
+| `HoursProviders` ▲ | select by `HoursSource` | — | new |
+| `EmailInitiator` △ | mail draft | `MacEmailInitiator` (AppleScript) | signature gains attachments |
+| `PathOpener` | Finder reveal | `MacPathOpener` | unchanged (gated by `--open`) |
+| `UnternehmenPropertiesLoader` ▲ | load kunde/issuer Properties by name | — | extracted from prompt |
+| `LeistungszeitraumFactory` ▲ | build period from year/month | — | extracted from prompt |

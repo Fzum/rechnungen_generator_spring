@@ -71,9 +71,9 @@ java -jar app.jar generate \
   --hours=142.5 --mail=false --open=false --format=json
 ```
 
-Success stdout (json):
+Success stdout (json) — `invoiceNumber` is the existing `RechnungUidGenerator` UID (`"Rechnung <customer>-<year>/<MM>"`); the PDF filename keeps the existing `rechnung_<short>_<month>_<year>.pdf` pattern:
 ```json
-{"invoiceNumber":"sellemond_nook_5_2026","pdfPath":"/abs/rechnungen/nook/rechnung_nook_5_2026.pdf","customer":"nook","issuer":"sellemond","period":"2026-05","hours":142.50,"net":14250.00,"vat":2850.00,"gross":17100.00,"attachments":["/abs/rechnungen/nook/rechnung_nook_5_2026.pdf","/abs/harvest_nook_2026-05.pdf"],"warnings":[]}
+{"invoiceNumber":"Rechnung nook-2026/05","pdfPath":"/abs/rechnungen/nook/rechnung_nook_5_2026.pdf","customer":"nook","issuer":"sellemond","period":"2026-05","hours":142.50,"net":14250.00,"vat":2850.00,"gross":17100.00,"attachments":["/abs/rechnungen/nook/rechnung_nook_5_2026.pdf","/abs/harvest_nook_2026-05.pdf"],"warnings":[]}
 ```
 
 Failure stdout (json), exit `3`:
