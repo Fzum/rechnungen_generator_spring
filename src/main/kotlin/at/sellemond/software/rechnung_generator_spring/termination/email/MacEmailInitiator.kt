@@ -33,11 +33,20 @@ class MacEmailInitiator(private val emailProperties: EmailProperties) : EmailIni
         val subject = replaceUmlauts(replace(emailProperties.subject, zeitraum))
         val body = replaceUmlauts(replace(emailProperties.body, zeitraum))
         val script = AppleMailScriptBuilder.build(kunde.contact.email, subject, body, attachments)
-        val scriptFile = File.createTempFile("rechnung-mail", ".scpt").apply {
-            deleteOnExit()
-            writeText(script)
+        val scriptFile = File.createTempFile("rechnung-mail", ".scpt")
+        scriptFile.writeText(script)
+        try {
+            // Wait for osascript to finish. In headless mode the JVM exits within ~1s, which would
+            // otherwise delete the temp script (and orphan osascript) before the draft is created.
+            val process = ProcessBuilder("osascript", scriptFile.absolutePath)
+                .redirectErrorStream(true)
+                .start()
+            val output = process.inputStream.bufferedReader().use { it.readText() }
+            val exitCode = process.waitFor()
+            check(exitCode == 0) { "osascript exited $exitCode: ${output.trim()}" }
+        } finally {
+            scriptFile.delete()
         }
-        Runtime.getRuntime().exec(arrayOf("osascript", scriptFile.absolutePath))
     }
 
     private fun replace(text: String, zeitraum: String) = replacePlaceholder(text, LEISTUNGSZEITRAUM, zeitraum)
